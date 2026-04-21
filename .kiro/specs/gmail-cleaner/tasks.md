@@ -24,8 +24,8 @@ Implement a fully client-side React + TypeScript SPA that connects to Gmail via 
     - Show error banner with retry option when OAuth fails
     - _Requirements: 1.1, 1.4_
 
-- [ ] 3. Gmail API client
-  - [ ] 3.1 Implement `src/api/gmailClient.ts` — `GmailApiClient` class with methods: `listMessageIds(pageToken?, labelIds?, query?)`, `batchGetMetadata(ids[])`, `trashMessages(ids[])`, `createFilter(criteria, action)`
+- [x] 3. Gmail API client
+  - [x] 3.1 Implement `src/api/gmailClient.ts` — `GmailApiClient` class with methods: `listMessageIds(pageToken?, labelIds?, query?)`, `batchGetMetadata(ids[])`, `trashMessages(ids[])`, `createFilter(criteria, action)`
     - Attach `Authorization: Bearer <token>` header automatically
     - Implement retry logic: up to 3 retries with 2-second delay on 5xx / 429; exponential backoff (2s, 4s, 8s) on 429
     - Transparently refresh token when within 60 seconds of expiry before each call
