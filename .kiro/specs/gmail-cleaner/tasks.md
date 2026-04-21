@@ -6,21 +6,21 @@ Implement a fully client-side React + TypeScript SPA that connects to Gmail via 
 
 ## Tasks
 
-- [ ] 1. Project scaffolding and core type definitions
+- [x] 1. Project scaffolding and core type definitions
   - Initialize Vite + React + TypeScript project with the directory structure: `src/types`, `src/api`, `src/data`, `src/cache`, `src/context`, `src/components`, `src/hooks`, `src/utils`
   - Create `src/types/index.ts` with all interfaces and types from the design: `EmailHeader`, `MessageMetadata`, `SenderIdentity`, `SubjectCluster`, `SenderGroup`, `DomainGroup`, `SpamReason`, `ActiveFilters`, `TimeFilter`, `CachedSession`, `GmailFilterSpec`, `SelectionState`
   - Install dependencies: `recharts`, `@tanstack/react-table`, `fast-check`, `vitest`, `@testing-library/react`, `@testing-library/user-event`
   - Configure Vitest in `vite.config.ts`
   - _Requirements: 1.1, 2.2, 3.1, 4.4, 5.1_
 
-- [ ] 2. OAuth 2.0 PKCE authentication
-  - [ ] 2.1 Implement `src/api/auth.ts` with PKCE helpers: `generateCodeVerifier()`, `generateCodeChallenge(verifier)`, `buildAuthUrl(challenge)`, `exchangeCodeForTokens(code, verifier)`, `refreshAccessToken(refreshToken)`
+- [x] 2. OAuth 2.0 PKCE authentication
+  - [x] 2.1 Implement `src/api/auth.ts` with PKCE helpers: `generateCodeVerifier()`, `generateCodeChallenge(verifier)`, `buildAuthUrl(challenge)`, `exchangeCodeForTokens(code, verifier)`, `refreshAccessToken(refreshToken)`
     - Store `access_token`, `refresh_token`, `expiry`, `userId` in `sessionStorage` under key `gmail-cleaner-auth`
     - _Requirements: 1.2, 1.3, 8.2_
-  - [ ] 2.2 Implement `src/context/AuthContext.tsx` — `AuthProvider` that manages the full PKCE lifecycle, handles the `/auth/callback` redirect, exposes `{ isAuthenticated, accessToken, signIn, signOut }` via React context
+  - [x] 2.2 Implement `src/context/AuthContext.tsx` — `AuthProvider` that manages the full PKCE lifecycle, handles the `/auth/callback` redirect, exposes `{ isAuthenticated, accessToken, signIn, signOut }` via React context
     - On `signOut`, clear `sessionStorage` and `localStorage` entries
     - _Requirements: 1.1, 1.3, 1.4, 1.5, 8.4_
-  - [ ] 2.3 Implement `src/components/LoginPage.tsx` and `src/components/GoogleSignInButton.tsx`
+  - [x] 2.3 Implement `src/components/LoginPage.tsx` and `src/components/GoogleSignInButton.tsx`
     - Show error banner with retry option when OAuth fails
     - _Requirements: 1.1, 1.4_
 
