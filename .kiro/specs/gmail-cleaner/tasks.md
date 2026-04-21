@@ -45,42 +45,42 @@ Implement a fully client-side React + TypeScript SPA that connects to Gmail via 
   - [x] 4.4 Implement `src/components/SyncPanel.tsx` with `SyncProgressBar` and sync controls (TimeFilter select, Re-sync button)
     - _Requirements: 2.3, 10.1_
 
-- [ ] 5. Checkpoint — Ensure all tests pass, ask the user if questions arise.
+- [x] 5. Checkpoint — Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 6. Core data processing — grouping and filtering
-  - [ ] 6.1 Implement `src/utils/parseSender.ts` — `parseSenderEmail(from: string): string` and `parseSenderIdentity(from: string): SenderIdentity` handling RFC 5322 display-name + address format and bare addresses
+- [x] 6. Core data processing — grouping and filtering
+  - [x] 6.1 Implement `src/utils/parseSender.ts` — `parseSenderEmail(from: string): string` and `parseSenderIdentity(from: string): SenderIdentity` handling RFC 5322 display-name + address format and bare addresses
     - _Requirements: 3.1_
-  - [ ] 6.2 Implement `src/data/DataProcessor.ts` — `groupBySender(messages: MessageMetadata[]): SenderGroup[]`
+  - [x] 6.2 Implement `src/data/DataProcessor.ts` — `groupBySender(messages: MessageMetadata[]): SenderGroup[]`
     - _Requirements: 3.1, 3.3, 10.4_
   - [ ]* 6.3 Write property test for grouping completeness (Property 1)
     - **Validates: Requirements 3.1**
   - [ ]* 6.4 Write property test for aggregate statistics correctness (Property 5)
     - **Validates: Requirements 4.6, 10.4**
-  - [ ] 6.5 Implement `groupByDomain(senderGroups: SenderGroup[]): DomainGroup[]` in `DataProcessor.ts`
+  - [x] 6.5 Implement `groupByDomain(senderGroups: SenderGroup[]): DomainGroup[]` in `DataProcessor.ts`
     - _Requirements: 13.2, 13.3_
   - [ ]* 6.6 Write property test for domain grouping correctness (Property 20)
     - **Validates: Requirements 13.2**
   - [ ]* 6.7 Write property test for DomainGroup aggregate correctness (Property 21)
     - **Validates: Requirements 13.3**
-  - [ ] 6.8 Implement `applyTimeFilter(groups: SenderGroup[], filter: TimeFilter): SenderGroup[]` in `DataProcessor.ts`
+  - [x] 6.8 Implement `applyTimeFilter(groups: SenderGroup[], filter: TimeFilter): SenderGroup[]` in `DataProcessor.ts`
     - _Requirements: 10.1, 10.2, 10.3_
   - [ ]* 6.9 Write property test for time filter correctness (Property 14)
     - **Validates: Requirements 10.1**
-  - [ ] 6.10 Implement `applySearchFilter(groups: SenderGroup[], query: string): SenderGroup[]` in `DataProcessor.ts`
+  - [x] 6.10 Implement `applySearchFilter(groups: SenderGroup[], query: string): SenderGroup[]` in `DataProcessor.ts`
     - _Requirements: 3.5, 3.6_
   - [ ]* 6.11 Write property test for search filter correctness (Property 3)
     - **Validates: Requirements 3.5**
 
-- [ ] 7. Spam detection and subject clustering
-  - [ ] 7.1 Implement `detectSpam(group: SenderGroup, messages: MessageMetadata[]): SpamReason[]` in `DataProcessor.ts`
+- [x] 7. Spam detection and subject clustering
+  - [x] 7.1 Implement `detectSpam(group: SenderGroup, messages: MessageMetadata[]): SpamReason[]` in `DataProcessor.ts`
     - _Requirements: 9.1, 9.2, 9.3_
   - [ ]* 7.2 Write property test for spam detection correctness (Property 11)
     - **Validates: Requirements 9.1, 9.2, 9.3**
-  - [ ] 7.3 Implement `normalizeSubject(subject: string): string` and `clusterSubjects(group: SenderGroup, messages: MessageMetadata[]): SubjectCluster[]` in `DataProcessor.ts`
+  - [x] 7.3 Implement `normalizeSubject(subject: string): string` and `clusterSubjects(group: SenderGroup, messages: MessageMetadata[]): SubjectCluster[]` in `DataProcessor.ts`
     - _Requirements: 14.1, 14.2, 14.4_
   - [ ]* 7.4 Write property test for subject clustering completeness (Property 23)
     - **Validates: Requirements 14.1**
-  - [ ] 7.5 Wire `detectSpam` and `clusterSubjects` into `groupBySender`
+  - [x] 7.5 Wire `detectSpam` and `clusterSubjects` into `groupBySender`
     - _Requirements: 9.1, 9.2, 9.3, 14.1_
 
 - [ ] 8. Unsubscribe link detection and CSV export
