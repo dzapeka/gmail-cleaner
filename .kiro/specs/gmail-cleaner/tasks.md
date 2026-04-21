@@ -33,16 +33,16 @@ Implement a fully client-side React + TypeScript SPA that connects to Gmail via 
   - [ ]* 3.2 Write unit tests for `GmailApiClient` retry logic and token refresh
     - _Requirements: 2.5_
 
-- [ ] 4. Metadata download and caching
-  - [ ] 4.1 Implement `src/cache/MetadataCache.ts` — `load(userId)`, `save(userId, session)`, `clear(userId)` using `localStorage` key `gmail-cleaner-cache-<userId>`; handle `QuotaExceededError` gracefully
+- [x] 4. Metadata download and caching
+  - [x] 4.1 Implement `src/cache/MetadataCache.ts` — `load(userId)`, `save(userId, session)`, `clear(userId)` using `localStorage` key `gmail-cleaner-cache-<userId>`; handle `QuotaExceededError` gracefully
     - Also manage `gmail-cleaner-unsubscribed` key in `localStorage`
     - _Requirements: 2.6, 8.3, 8.4, 11.5_
   - [ ]* 4.2 Write property test for cache round-trip (Property 15)
     - **Validates: Requirements 2.6, 11.5**
-  - [ ] 4.3 Implement `src/context/DataContext.tsx` — `DataProvider` that orchestrates metadata download: paginate `listMessageIds` (500 per page) across INBOX, SENT, ALL_MAIL labels, batch-fetch metadata in groups of 100, report progress, load from / save to `MetadataCache`
+  - [x] 4.3 Implement `src/context/DataContext.tsx` — `DataProvider` that orchestrates metadata download: paginate `listMessageIds` (500 per page) across INBOX, SENT, ALL_MAIL labels, batch-fetch metadata in groups of 100, report progress, load from / save to `MetadataCache`
     - Show "Last synced: X ago" indicator; prompt re-sync if cache is older than 24 hours
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.6_
-  - [ ] 4.4 Implement `src/components/SyncPanel.tsx` with `SyncProgressBar` and sync controls (TimeFilter select, Re-sync button)
+  - [x] 4.4 Implement `src/components/SyncPanel.tsx` with `SyncProgressBar` and sync controls (TimeFilter select, Re-sync button)
     - _Requirements: 2.3, 10.1_
 
 - [ ] 5. Checkpoint — Ensure all tests pass, ask the user if questions arise.
