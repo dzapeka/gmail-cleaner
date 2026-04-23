@@ -119,28 +119,28 @@ Implement a fully client-side React + TypeScript SPA that connects to Gmail via 
   - [ ]* 10.9 Write property test for DomainGroup selection resolution (Property 22)
     - **Validates: Requirements 13.5**
 
-- [ ] 11. Statistics bar and chart section
-  - [ ] 11.1 Implement `src/components/StatsBar.tsx`
+- [x] 11. Statistics bar and chart section
+  - [x] 11.1 Implement `src/components/StatsBar.tsx`
     - _Requirements: 4.6_
-  - [ ] 11.2 Implement `src/components/ChartSection.tsx` with `TopNControl` and `SenderBarChart` (Recharts)
+  - [x] 11.2 Implement `src/components/ChartSection.tsx` with `TopNControl` and `SenderBarChart` (Recharts)
     - _Requirements: 4.1, 4.2, 4.3, 4.7, 4.8_
 
-- [ ] 12. Sender table
-  - [ ] 12.1 Implement `src/components/SenderTable.tsx` using TanStack Table v8
+- [x] 12. Sender table
+  - [x] 12.1 Implement `src/components/SenderTable.tsx` using TanStack Table v8
     - _Requirements: 3.2, 3.3, 3.4, 4.4, 4.5, 4.8_
-  - [ ] 12.2 Implement `SenderRow` with `SelectCheckbox`, `SpamIndicator`, `UnsubscribeButton`, `ExpandToggle`
+  - [x] 12.2 Implement `SenderRow` with `SelectCheckbox`, `SpamIndicator`, `UnsubscribeButton`, `ExpandToggle`
     - _Requirements: 5.1, 9.4, 9.6, 11.2, 11.6_
   - [ ]* 12.3 Write property test for spam indicator rendering (Property 13)
     - **Validates: Requirements 9.4**
   - [ ]* 12.4 Write property test for unsubscribe button visibility (Property 17)
     - **Validates: Requirements 11.2, 11.6**
-  - [ ] 12.5 Implement `ExpandedEmailList` with SubjectCluster sub-rows and breakdown summary
+  - [x] 12.5 Implement `ExpandedEmailList` with SubjectCluster sub-rows and breakdown summary
     - _Requirements: 5.4, 5.5, 14.2, 14.3, 14.5, 14.6_
   - [ ]* 12.6 Write property test for expanded group completeness (Property 8)
     - **Validates: Requirements 5.5**
 
-- [ ] 13. Toolbar and filter controls
-  - [ ] 13.1 Implement `src/components/ToolBar.tsx` with all filter controls and ExportCsvButton
+- [x] 13. Toolbar and filter controls
+  - [x] 13.1 Implement `src/components/ToolBar.tsx` with all filter controls and ExportCsvButton
     - _Requirements: 3.5, 3.6, 9.5, 10.1, 10.2, 10.3, 12.1, 12.4, 13.1, 13.6_
   - [ ]* 13.2 Write property test for spam filter correctness (Property 12)
     - **Validates: Requirements 9.5**
