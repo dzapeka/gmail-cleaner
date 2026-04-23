@@ -145,20 +145,20 @@ Implement a fully client-side React + TypeScript SPA that connects to Gmail via 
   - [ ]* 13.2 Write property test for spam filter correctness (Property 12)
     - **Validates: Requirements 9.5**
 
-- [ ] 14. Selection summary bar and deletion flow
-  - [ ] 14.1 Implement `src/components/SelectionSummaryBar.tsx`
+- [x] 14. Selection summary bar and deletion flow
+  - [x] 14.1 Implement `src/components/SelectionSummaryBar.tsx`
     - _Requirements: 5.3_
-  - [ ] 14.2 Implement `src/components/DeleteConfirmDialog.tsx`
+  - [x] 14.2 Implement `src/components/DeleteConfirmDialog.tsx`
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
   - [ ]* 14.3 Write property test for deletion batch size (Property 9)
     - **Validates: Requirements 6.3**
   - [ ]* 14.4 Write property test for post-deletion state consistency (Property 10)
     - **Validates: Requirements 6.6**
 
-- [ ] 15. Filter creation and unsubscribe flows
-  - [ ] 15.1 Implement `src/components/FilterConfigDialog.tsx`
+- [x] 15. Filter creation and unsubscribe flows
+  - [x] 15.1 Implement `src/components/FilterConfigDialog.tsx`
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
-  - [ ] 15.2 Implement `src/components/UnsubscribeConfirmDialog.tsx`
+  - [x] 15.2 Implement `src/components/UnsubscribeConfirmDialog.tsx`
     - _Requirements: 11.3, 11.4, 11.5_
 
 - [ ] 16. Header, layout wiring, and security hardening
