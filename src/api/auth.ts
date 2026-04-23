@@ -19,7 +19,7 @@ const PKCE_VERIFIER_KEY = 'gmail-cleaner-pkce-verifier';
 const TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';
 const AUTH_ENDPOINT = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GMAIL_SCOPES =
-  'https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.modify';
+  'openid email profile https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.modify';
 
 export interface StoredAuth {
   access_token: string;
@@ -63,6 +63,7 @@ export async function exchangeCodeForTokens(code: string, verifier: string): Pro
   const params = new URLSearchParams({
     code,
     client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID as string,
+    client_secret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET as string,
     redirect_uri: import.meta.env.VITE_REDIRECT_URI as string,
     code_verifier: verifier,
     grant_type: 'authorization_code',
@@ -104,6 +105,7 @@ export async function refreshAccessToken(): Promise<string> {
 
   const params = new URLSearchParams({
     client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID as string,
+    client_secret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET as string,
     refresh_token: auth.refresh_token,
     grant_type: 'refresh_token',
   });

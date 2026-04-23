@@ -69,10 +69,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const stored = getStoredAuth();
         if (!stored) throw new Error('No auth after token exchange');
 
+        console.log('Token exchange OK, access_token length:', stored.access_token?.length);
+
         // Fetch user info to get email and id
         const userInfoRes = await fetch(USERINFO_ENDPOINT, {
           headers: { Authorization: `Bearer ${stored.access_token}` },
         });
+        console.log('Userinfo response status:', userInfoRes.status);
         if (!userInfoRes.ok) throw new Error('Failed to fetch user info');
 
         const userInfo = (await userInfoRes.json()) as { id: string; email: string };

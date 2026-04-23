@@ -169,7 +169,7 @@ Implement a fully client-side React + TypeScript SPA that connects to Gmail via 
   - [x] 16.3 Verify security requirements: token storage, data isolation, no proxy
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
-- [ ] 17. Checkpoint — Ensure all tests pass, ask the user if questions arise.
+- [x] 17. Checkpoint — Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 18. Remaining property-based tests
   - [ ]* 18.1 Write property test for tooltip content completeness (Property 6)
@@ -187,7 +187,7 @@ Implement a fully client-side React + TypeScript SPA that connects to Gmail via 
   - [ ]* 19.5 Write component test for `FilterConfigDialog`
     - _Requirements: 7.2_
 
-- [ ] 20. Final checkpoint — Ensure all tests pass, ask the user if questions arise.
+- [x] 20. Final checkpoint — Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
 
