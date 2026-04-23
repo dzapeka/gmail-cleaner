@@ -97,24 +97,24 @@ Implement a fully client-side React + TypeScript SPA that connects to Gmail via 
   - [ ]* 8.6 Write property test for CSV filter correctness (Property 19)
     - **Validates: Requirements 12.4**
 
-- [ ] 9. Checkpoint — Ensure all tests pass, ask the user if questions arise.
+- [x] 9. Checkpoint — Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 10. View context and derived state
-  - [ ] 10.1 Implement `src/context/ViewContext.tsx` — `ViewProvider` managing `ActiveFilters`, derived groups via `useMemo`, and `SelectionState`
+- [x] 10. View context and derived state
+  - [x] 10.1 Implement `src/context/ViewContext.tsx` — `ViewProvider` managing `ActiveFilters`, derived groups via `useMemo`, and `SelectionState`
     - _Requirements: 3.6, 4.3, 10.3, 13.6_
-  - [ ] 10.2 Implement top-N selection logic inside `ViewContext`
+  - [x] 10.2 Implement top-N selection logic inside `ViewContext`
     - _Requirements: 4.1, 4.2_
   - [ ]* 10.3 Write property test for top-N selection correctness (Property 4)
     - **Validates: Requirements 4.1**
-  - [ ] 10.4 Implement sorting logic in `ViewContext`
+  - [x] 10.4 Implement sorting logic in `ViewContext`
     - _Requirements: 3.2, 3.4_
   - [ ]* 10.5 Write property test for sorting correctness (Property 2)
     - **Validates: Requirements 3.2, 3.4**
-  - [ ] 10.6 Implement selection helpers in `ViewContext`: `selectAll`, `deselectAll`, `toggleSender`, `toggleMessage`, `getSelectedEmailCount`
+  - [x] 10.6 Implement selection helpers in `ViewContext`: `selectAll`, `deselectAll`, `toggleSender`, `toggleMessage`, `getSelectedEmailCount`
     - _Requirements: 5.1, 5.2, 5.3_
   - [ ]* 10.7 Write property test for selection invariant (Property 7)
     - **Validates: Requirements 5.2, 5.3**
-  - [ ] 10.8 Implement `resolveSelectedMessageIds(selectedDomainGroups)` in `ViewContext`
+  - [x] 10.8 Implement `resolveSelectedMessageIds(selectedDomainGroups)` in `ViewContext`
     - _Requirements: 13.5_
   - [ ]* 10.9 Write property test for DomainGroup selection resolution (Property 22)
     - **Validates: Requirements 13.5**
