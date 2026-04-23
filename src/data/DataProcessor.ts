@@ -7,6 +7,7 @@ import type {
   SubjectCluster,
 } from '../types';
 import { parseSenderIdentity } from '../utils/parseSender';
+import { extractUnsubscribeLink } from '../utils/unsubscribe';
 
 // ---------------------------------------------------------------------------
 // groupBySender
@@ -55,12 +56,13 @@ export function groupBySender(messages: MessageMetadata[]): SenderGroup[] {
 
   const groups = Array.from(map.values());
 
-  // Wire spam detection and subject clustering (task 7.5)
   for (const group of groups) {
     group.spamReasons = detectSpam(group, messages);
     group.isSuspectedSpam = group.spamReasons.length > 0;
     group.subjectClusters = clusterSubjects(group, messages);
-    // TODO: wire extractUnsubscribeLinks once src/utils/unsubscribe.ts is implemented
+
+    const groupMessages = messages.filter((m) => group.messageIds.includes(m.id));
+    group.unsubscribeLink = extractUnsubscribeLink(groupMessages);
   }
 
   return groups.sort((a, b) => b.count - a.count);

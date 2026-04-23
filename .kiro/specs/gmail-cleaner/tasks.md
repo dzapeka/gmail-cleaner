@@ -83,14 +83,14 @@ Implement a fully client-side React + TypeScript SPA that connects to Gmail via 
   - [x] 7.5 Wire `detectSpam` and `clusterSubjects` into `groupBySender`
     - _Requirements: 9.1, 9.2, 9.3, 14.1_
 
-- [ ] 8. Unsubscribe link detection and CSV export
-  - [ ] 8.1 Implement `parseUnsubscribeLink(headerValue: string): string | null` in `src/utils/unsubscribe.ts`
+- [x] 8. Unsubscribe link detection and CSV export
+  - [x] 8.1 Implement `parseUnsubscribeLink(headerValue: string): string | null` in `src/utils/unsubscribe.ts`
     - _Requirements: 11.1_
   - [ ]* 8.2 Write property test for unsubscribe link parsing (Property 16)
     - **Validates: Requirements 11.1**
-  - [ ] 8.3 Implement `extractUnsubscribeLink` in `DataProcessor.ts`
+  - [x] 8.3 Implement `extractUnsubscribeLink` in `DataProcessor.ts`
     - _Requirements: 11.1_
-  - [ ] 8.4 Implement `generateCsv` and `downloadCsv` in `src/utils/csvExport.ts`
+  - [x] 8.4 Implement `generateCsv` and `downloadCsv` in `src/utils/csvExport.ts`
     - _Requirements: 12.1, 12.2, 12.3, 12.5_
   - [ ]* 8.5 Write property test for CSV field completeness (Property 18)
     - **Validates: Requirements 12.2**
