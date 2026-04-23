@@ -161,12 +161,12 @@ Implement a fully client-side React + TypeScript SPA that connects to Gmail via 
   - [x] 15.2 Implement `src/components/UnsubscribeConfirmDialog.tsx`
     - _Requirements: 11.3, 11.4, 11.5_
 
-- [ ] 16. Header, layout wiring, and security hardening
-  - [ ] 16.1 Implement `src/components/Header.tsx` and `src/components/MainLayout.tsx`
+- [x] 16. Header, layout wiring, and security hardening
+  - [x] 16.1 Implement `src/components/Header.tsx` and `src/components/MainLayout.tsx`
     - _Requirements: 1.5_
-  - [ ] 16.2 Wire all contexts into `App.tsx`
+  - [x] 16.2 Wire all contexts into `App.tsx`
     - _Requirements: 1.1, 8.1, 8.2, 8.3, 8.4, 8.5_
-  - [ ] 16.3 Verify security requirements: token storage, data isolation, no proxy
+  - [x] 16.3 Verify security requirements: token storage, data isolation, no proxy
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
 - [ ] 17. Checkpoint — Ensure all tests pass, ask the user if questions arise.

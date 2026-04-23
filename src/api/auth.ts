@@ -1,3 +1,19 @@
+/**
+ * Security guarantees for token handling:
+ *
+ * - AccessToken is stored exclusively in sessionStorage, which is scoped to the
+ *   current browser tab and cleared automatically when the tab is closed.
+ *   It is never written to localStorage, cookies, or any server-side storage.
+ *
+ * - No token is ever transmitted to third-party servers. The only endpoints
+ *   that receive credentials are Google's own OAuth2 token endpoint
+ *   (https://oauth2.googleapis.com/token) and the Gmail REST API.
+ *
+ * - All Gmail API calls are made directly from the user's browser to
+ *   https://www.googleapis.com/gmail/v1/. No proxy server or backend
+ *   intermediary is involved in these requests.
+ */
+
 const AUTH_STORAGE_KEY = 'gmail-cleaner-auth';
 const PKCE_VERIFIER_KEY = 'gmail-cleaner-pkce-verifier';
 const TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';
