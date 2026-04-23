@@ -60,7 +60,18 @@ export class GmailApiClient {
   }
 
   async batchGetMetadata(ids: string[]): Promise<MessageMetadata[]> {
-    const results = await Promise.all(ids.map((id) => this.fetchMessageMetadata(id)));
+    const results: MessageMetadata[] = [];
+    // Process in small concurrent groups to avoid 429 rate limiting
+    const CONCURRENCY = 5;
+    for (let i = 0; i < ids.length; i += CONCURRENCY) {
+      const chunk = ids.slice(i, i + CONCURRENCY);
+      const batch = await Promise.all(chunk.map((id) => this.fetchMessageMetadata(id)));
+      results.push(...batch);
+      // Small delay between groups to respect rate limits
+      if (i + CONCURRENCY < ids.length) {
+        await sleep(200);
+      }
+    }
     return results;
   }
 
