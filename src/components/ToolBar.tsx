@@ -81,32 +81,19 @@ function SpamFilterToggle() {
 // TimeFilterSelect
 // ---------------------------------------------------------------------------
 
-type TimeFilterOption = {
-  label: string;
-  value: TimeFilter;
-};
-
-const TIME_FILTER_OPTIONS: TimeFilterOption[] = [
-  { label: 'All emails', value: { type: 'all' } },
-  { label: 'Older than 6 months', value: { type: 'olderThan', months: 6 } },
-  { label: 'Older than 1 year', value: { type: 'olderThan', months: 12 } },
-  { label: 'Older than 2 years', value: { type: 'olderThan', months: 24 } },
-  { label: 'Older than 5 years', value: { type: 'olderThan', months: 60 } },
-];
-
-function timeFilterToKey(filter: TimeFilter): string {
-  if (filter.type === 'all') return 'all';
-  return `olderThan-${filter.months}`;
-}
-
-function keyToTimeFilter(key: string): TimeFilter {
-  if (key === 'all') return { type: 'all' };
-  const months = parseInt(key.replace('olderThan-', ''), 10);
-  return { type: 'olderThan', months };
-}
-
 function TimeFilterSelect() {
   const { activeFilters, setTimeFilter } = useView();
+
+  function timeFilterToKey(filter: TimeFilter): string {
+    if (filter.type === 'all') return 'all';
+    return `${filter.type}-${filter.months}`;
+  }
+
+  function keyToTimeFilter(key: string): TimeFilter {
+    if (key === 'all') return { type: 'all' };
+    const [type, months] = key.split('-');
+    return { type: type as 'newerThan' | 'olderThan', months: parseInt(months, 10) };
+  }
 
   return (
     <select
@@ -115,11 +102,21 @@ function TimeFilterSelect() {
       style={{ ...inputStyle, width: 'auto' }}
       aria-label="Time filter"
     >
-      {TIME_FILTER_OPTIONS.map((opt) => (
-        <option key={timeFilterToKey(opt.value)} value={timeFilterToKey(opt.value)}>
-          {opt.label}
-        </option>
-      ))}
+      <option value="all">All time</option>
+      <optgroup label="Newer than">
+        <option value="newerThan-1">Last month</option>
+        <option value="newerThan-3">Last 3 months</option>
+        <option value="newerThan-6">Last 6 months</option>
+        <option value="newerThan-12">Last year</option>
+        <option value="newerThan-24">Last 2 years</option>
+      </optgroup>
+      <optgroup label="Older than">
+        <option value="olderThan-1">Older than 1 month</option>
+        <option value="olderThan-6">Older than 6 months</option>
+        <option value="olderThan-12">Older than 1 year</option>
+        <option value="olderThan-24">Older than 2 years</option>
+        <option value="olderThan-60">Older than 5 years</option>
+      </optgroup>
     </select>
   );
 }

@@ -149,8 +149,8 @@ export function applyTimeFilter(
 }
 
 /**
- * Filter SenderGroup messages to only those older than the cutoff date,
- * recomputing all per-group statistics from the raw message list.
+ * Filter SenderGroup messages by time range, recomputing all per-group statistics.
+ * Supports: all, newerThan (last N months), olderThan (older than N months).
  */
 export function applyTimeFilterWithMessages(
   groups: SenderGroup[],
@@ -163,7 +163,6 @@ export function applyTimeFilterWithMessages(
   cutoff.setMonth(cutoff.getMonth() - filter.months);
   const cutoffIso = cutoff.toISOString();
 
-  // Build a lookup for quick access
   const msgById = new Map<string, MessageMetadata>();
   for (const m of allMessages) msgById.set(m.id, m);
 
@@ -172,7 +171,9 @@ export function applyTimeFilterWithMessages(
   for (const group of groups) {
     const filteredIds = group.messageIds.filter((id) => {
       const m = msgById.get(id);
-      return m !== undefined && m.date < cutoffIso;
+      if (!m) return false;
+      // newerThan: keep messages after cutoff; olderThan: keep messages before cutoff
+      return filter.type === 'newerThan' ? m.date >= cutoffIso : m.date < cutoffIso;
     });
 
     if (filteredIds.length === 0) continue;

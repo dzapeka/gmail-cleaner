@@ -61,6 +61,9 @@ interface ViewContextValue {
   // Stats
   totalEmailCount: number;
   uniqueSenderCount: number;
+  filteredEmailCount: number;
+  isFiltered: boolean;
+  resetFilters: () => void;
 
   // Selection
   selection: SelectionState;
@@ -139,6 +142,14 @@ export function ViewProvider({ children }: { children: ReactNode }) {
   // 5. Stats
   const totalEmailCount = useMemo(() => messages.length, [messages]);
   const uniqueSenderCount = useMemo(() => allSenderGroups.length, [allSenderGroups]);
+  const filteredEmailCount = useMemo(
+    () => filteredSenderGroups.reduce((sum, g) => sum + g.count, 0),
+    [filteredSenderGroups],
+  );
+  const isFiltered = useMemo(
+    () => activeFilters.timeFilter.type !== 'all' || activeFilters.searchQuery.trim() !== '' || activeFilters.showSpamOnly,
+    [activeFilters],
+  );
 
   // ---------------------------------------------------------------------------
   // Filter setters
@@ -162,6 +173,15 @@ export function ViewProvider({ children }: { children: ReactNode }) {
 
   const setTopN = useCallback((n: number | 'all') => {
     setActiveFilters((prev) => ({ ...prev, topN: n }));
+  }, []);
+
+  const resetFilters = useCallback(() => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      timeFilter: { type: 'all' },
+      searchQuery: '',
+      showSpamOnly: false,
+    }));
   }, []);
 
   // ---------------------------------------------------------------------------
@@ -320,6 +340,9 @@ export function ViewProvider({ children }: { children: ReactNode }) {
     topNGroups,
     totalEmailCount,
     uniqueSenderCount,
+    filteredEmailCount,
+    isFiltered,
+    resetFilters,
     selection,
     selectAll,
     deselectAll,

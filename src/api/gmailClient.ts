@@ -116,7 +116,7 @@ export class GmailApiClient {
       threadId: data.threadId,
       from: getHeader('From'),
       subject: getHeader('Subject'),
-      date: getHeader('Date'),
+      date: parseToIso(getHeader('Date')),
       isUnread: (data.labelIds ?? []).includes('UNREAD'),
       listUnsubscribe: getHeader('List-Unsubscribe') || null,
     };
@@ -178,4 +178,11 @@ export class GmailApiClient {
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Convert RFC 2822 or any date string to ISO 8601. Falls back to epoch on parse error. */
+function parseToIso(dateStr: string): string {
+  if (!dateStr) return new Date(0).toISOString();
+  const ts = Date.parse(dateStr);
+  return isNaN(ts) ? new Date(0).toISOString() : new Date(ts).toISOString();
 }

@@ -66,7 +66,8 @@ export interface DomainGroup {
 // Time filter
 export type TimeFilter =
   | { type: 'all' }
-  | { type: 'olderThan'; months: number };
+  | { type: 'newerThan'; months: number }   // show emails from last N months
+  | { type: 'olderThan'; months: number };  // show emails older than N months
 
 // Active filter state
 export interface ActiveFilters {

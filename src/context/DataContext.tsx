@@ -15,6 +15,15 @@ import type { MessageMetadata, CachedSession } from '../types/index';
 
 const BATCH_SIZE = 100;
 
+/** Normalize any date string to ISO 8601 for consistent comparison. */
+function normalizeDate(dateStr: string): string {
+  if (!dateStr) return new Date(0).toISOString();
+  // Already ISO 8601
+  if (dateStr.includes('T') && dateStr.includes('Z')) return dateStr;
+  const ts = Date.parse(dateStr);
+  return isNaN(ts) ? new Date(0).toISOString() : new Date(ts).toISOString();
+}
+
 export type SyncMode = 'replace' | 'merge';
 
 export interface SyncRange {
@@ -71,12 +80,17 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const cancelledRef = useRef(false);
 
-  // On mount: load from cache
+  // On mount: load from cache and normalize dates to ISO 8601
   useEffect(() => {
     if (!isAuthenticated || !userId) return;
     const cached = MetadataCache.load(userId);
     if (!cached) return;
-    setMessages(cached.messages);
+    // Normalize legacy RFC 2822 dates to ISO 8601 for correct string comparison
+    const normalized = cached.messages.map(m => ({
+      ...m,
+      date: normalizeDate(m.date),
+    }));
+    setMessages(normalized);
     setLastSyncedAt(cached.cachedAt);
     setSyncStatus('done');
   }, [isAuthenticated, userId]);
