@@ -1,6 +1,7 @@
 import {
   useRef,
   useEffect,
+  useMemo,
   useState,
   useCallback,
   type CSSProperties,
@@ -17,6 +18,7 @@ import {
 } from '@tanstack/react-table';
 import type { SenderGroup, DomainGroup, SubjectCluster } from '../types/index';
 import { useView } from '../context/ViewContext';
+import { useData } from '../context/DataContext';
 
 // ---------------------------------------------------------------------------
 // SpamIndicator
@@ -253,11 +255,15 @@ function SenderTableView({ highlightedEmail, onUnsubscribeClick }: SenderTablePr
   // Row refs for scroll-to
   const rowRefs = useRef<Map<string, HTMLTableRowElement>>(new Map());
 
-  // Build a message lookup map for ExpandedEmailList
-  // We derive it from the groups themselves (subject/date not available here without raw messages)
-  // We'll pass an empty map and rely on the group's messageIds; the expanded list will show IDs
-  // In a real app DataContext would provide the message map — for now we pass what we have.
-  const emptyMsgMap = useRef<Map<string, { subject: string; date: string }>>(new Map());
+  // Build message lookup map from DataContext
+  const { messages } = useData();
+  const msgMap = useMemo(() => {
+    const map = new Map<string, { subject: string; date: string }>();
+    for (const m of messages) {
+      map.set(m.id, { subject: m.subject, date: m.date });
+    }
+    return map;
+  }, [messages]);
 
   // Scroll + highlight when highlightedEmail changes
   useEffect(() => {
@@ -432,7 +438,7 @@ function SenderTableView({ highlightedEmail, onUnsubscribeClick }: SenderTablePr
                       <td colSpan={columns.length} style={{ padding: 0 }}>
                         <ExpandedEmailList
                           group={row.original}
-                          allMessages={emptyMsgMap.current}
+                          allMessages={msgMap}
                           toggleMessage={toggleMessage}
                           selectedMessageIds={selection.selectedMessageIds}
                         />
