@@ -7,14 +7,17 @@ All Gmail data stays in your browser — no third-party storage. A small local a
 ## Features
 
 - Groups emails by sender or domain with email counts
-- Bar chart visualization (top N senders)
+- Bar chart visualization (top N senders, configurable)
 - Smart spam detection (keywords, unread ratio, repetitive subjects)
 - Subject clustering (Promotional / Transactional / Newsletter / Other)
 - One-click unsubscribe via `List-Unsubscribe` header
 - Bulk delete emails (moves to trash)
 - Create Gmail filters for selected senders
 - Export sender list to CSV
-- Time-based filtering (older than 6 months / 1 year / 2 years / 5 years)
+- Sync range selector (last week / month / 6 months / year / all mail)
+- Merge or Replace sync modes
+- Time-based display filter with grouped options (newer than / older than)
+- Filtered stats bar showing "X of Y emails" with one-click clear
 
 ---
 
@@ -109,18 +112,22 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 ## Usage
 
 1. Click **Sign in with Google** and authorize the app
-2. The app will start syncing your inbox (may take a few minutes for large mailboxes)
+2. Select a sync range (All mail / Last week / Last month / etc.) and click **Start sync**
+   - **Merge** — adds new emails to existing cache (default, fast)
+   - **Replace** — replaces cache with selected range only (requires confirmation)
 3. Once synced, you'll see a bar chart and sender table
 4. Use filters to find unwanted senders:
-   - Toggle **Show spam only** to see auto-detected spam
-   - Use **Time filter** to focus on old emails
-   - Search by sender name or email
+   - **Time filter** — grouped dropdown with "Newer than" and "Older than" options
+   - **Show spam only** — auto-detected spam senders
+   - **Search** — filter by sender name or email
+   - **By domain** — group senders by domain instead of individual address
+   - Stats bar shows `X of Y emails · A of B senders` when filters are active, with a **× Clear filters** button
 5. Select senders using checkboxes
 6. Choose an action:
    - **Delete** — moves selected emails to trash
    - **Create filter** — sets up a Gmail rule for future emails
    - **Unsubscribe** — opens the unsubscribe link in a new tab
-7. Use **Export CSV** to download the full sender list
+7. Use **Export CSV** to download the current filtered sender list
 
 ---
 
@@ -135,8 +142,9 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 - The app only downloads email **metadata** (From, Subject, Date) — never the full email body
 - Data is cached in browser `localStorage` under the key `gmail-cleaner-cache-<userId>` and persists between sessions until you sign out or clear the browser storage
-- Sync does **not** start automatically on login — click **Start sync** to begin
-- **Re-sync** does a full refresh from Gmail — any emails you deleted in Gmail will be removed from the local cache
+- Sync does **not** start automatically on login — select a range and click **Start sync**
+- **Merge sync** adds new emails to the existing cache; **Replace sync** fully replaces it
+- **Re-sync** fetches fresh data from Gmail — deleted emails will be removed from the cache
 - Gmail API is **free** — no charges for personal use
 - The app works in **Testing mode** — only accounts added as Test Users can sign in
 
