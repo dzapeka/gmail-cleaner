@@ -7,12 +7,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Allow requests from the Vite dev server
-app.use(cors({ origin: process.env.CLIENT_ORIGIN ?? 'http://localhost:5173' }));
+app.use(cors({ origin: process.env.VITE_REDIRECT_URI ?? 'http://localhost:5173' }));
 
 const TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';
-const CLIENT_ID = process.env.GOOGLE_CLIENT_ID ?? '';
+const CLIENT_ID = process.env.VITE_GOOGLE_CLIENT_ID ?? '';
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET ?? '';
-const REDIRECT_URI = process.env.REDIRECT_URI ?? 'http://localhost:5173';
+const REDIRECT_URI = process.env.VITE_REDIRECT_URI ?? 'http://localhost:5173';
 
 // POST /auth/token — exchange authorization code for tokens
 app.post('/auth/token', async (req, res) => {

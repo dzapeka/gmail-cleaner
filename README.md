@@ -75,16 +75,15 @@ cp .env.example .env
 Edit `.env` and fill in your credentials:
 
 ```env
-# Client-side (safe to expose in browser)
+# Shared (used by both browser and server)
 VITE_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 VITE_REDIRECT_URI=http://localhost:5173
+
+# Browser only
 VITE_AUTH_SERVER_URL=http://localhost:3001
 
-# Server-side only (never sent to browser)
-GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+# Server only (never sent to browser)
 GOOGLE_CLIENT_SECRET=your-client-secret
-REDIRECT_URI=http://localhost:5173
-CLIENT_ORIGIN=http://localhost:5173
 ```
 
 ### 3. Run the app
