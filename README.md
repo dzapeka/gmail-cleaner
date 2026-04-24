@@ -2,7 +2,7 @@
 
 A client-side web app to analyze, visualize, and clean your Gmail inbox. Groups emails by sender, detects spam, supports unsubscribing, bulk deletion, and Gmail filter creation.
 
-All data stays in your browser — no backend server, no third-party storage.
+All Gmail data stays in your browser — no third-party storage. A small local auth proxy server handles the OAuth token exchange to keep your `client_secret` out of the browser.
 
 ## Features
 
@@ -75,18 +75,35 @@ cp .env.example .env
 Edit `.env` and fill in your credentials:
 
 ```env
+# Client-side (safe to expose in browser)
 VITE_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
-VITE_GOOGLE_CLIENT_SECRET=your-client-secret
 VITE_REDIRECT_URI=http://localhost:5173
+VITE_AUTH_SERVER_URL=http://localhost:3001
+
+# Server-side only (never sent to browser)
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret
+REDIRECT_URI=http://localhost:5173
+CLIENT_ORIGIN=http://localhost:5173
 ```
 
 ### 3. Run the app
 
+The app requires two processes running simultaneously. Open **two terminals**:
+
+**Terminal 1 — auth proxy server:**
+```bash
+npm run server
+```
+
+**Terminal 2 — Vite dev server:**
 ```bash
 npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+> The auth proxy runs on `http://localhost:3001` and handles OAuth token exchange server-side so that `client_secret` is never exposed in the browser.
 
 ---
 
@@ -107,6 +124,13 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 7. Use **Export CSV** to download the full sender list
 
 ---
+
+## Security
+
+- `client_secret` is stored only in `.env` on your machine and handled by the local auth proxy — it never reaches the browser
+- Access tokens are stored in `sessionStorage` (cleared when the tab is closed)
+- All Gmail API calls go directly from your browser to Google — no proxy involved
+- Email data (metadata only) is cached in `localStorage` and never sent anywhere
 
 ## Notes
 
