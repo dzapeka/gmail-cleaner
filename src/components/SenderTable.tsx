@@ -19,6 +19,58 @@ import {
 import type { SenderGroup, DomainGroup, SubjectCluster } from '../types/index';
 import { useView } from '../context/ViewContext';
 import { useData } from '../context/DataContext';
+import { usePreferences } from '../context/PreferencesContext';
+
+// ---------------------------------------------------------------------------
+// SenderActions — trust / hide buttons
+// ---------------------------------------------------------------------------
+
+interface SenderActionsProps {
+  group: SenderGroup;
+}
+
+function SenderActions({ group }: SenderActionsProps) {
+  const { trustedSenders, hiddenSenders, trustSender, untrustSender, hideSender, unhideSender } = usePreferences();
+  const email = group.sender.email;
+  const isTrusted = trustedSenders.has(email);
+  const isHidden = hiddenSenders.has(email);
+
+  return (
+    <div style={{ display: 'flex', gap: '4px' }}>
+      <button
+        onClick={() => isTrusted ? untrustSender(email) : trustSender(email)}
+        title={isTrusted ? 'Remove from trusted' : 'Mark as trusted (not spam)'}
+        style={{
+          padding: '2px 7px',
+          fontSize: '0.7rem',
+          border: '1px solid #dadce0',
+          borderRadius: '3px',
+          cursor: 'pointer',
+          background: isTrusted ? '#e6f4ea' : '#f8f9fa',
+          color: isTrusted ? '#188038' : '#555',
+          fontWeight: isTrusted ? 600 : 400,
+        }}
+      >
+        {isTrusted ? '✓ Trusted' : 'Trust'}
+      </button>
+      <button
+        onClick={() => isHidden ? unhideSender(email) : hideSender(email)}
+        title={isHidden ? 'Unhide sender' : 'Hide sender from list'}
+        style={{
+          padding: '2px 7px',
+          fontSize: '0.7rem',
+          border: '1px solid #dadce0',
+          borderRadius: '3px',
+          cursor: 'pointer',
+          background: isHidden ? '#fce8e6' : '#f8f9fa',
+          color: isHidden ? '#d93025' : '#555',
+        }}
+      >
+        {isHidden ? 'Unhide' : 'Hide'}
+      </button>
+    </div>
+  );
+}
 
 // ---------------------------------------------------------------------------
 // SpamIndicator
@@ -364,6 +416,12 @@ function SenderTableView({ highlightedEmail, onUnsubscribeClick }: SenderTablePr
       cell: ({ row }) => (
         <UnsubscribeButton group={row.original} onUnsubscribeClick={onUnsubscribeClick} />
       ),
+      enableSorting: false,
+    }),
+    senderColumnHelper.display({
+      id: 'actions',
+      header: '',
+      cell: ({ row }) => <SenderActions group={row.original} />,
       enableSorting: false,
     }),
   ];

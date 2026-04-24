@@ -21,6 +21,7 @@ import {
   applySearchFilter,
 } from '../data/DataProcessor';
 import { useData } from './DataContext';
+import { usePreferences } from './PreferencesContext';
 
 // ---------------------------------------------------------------------------
 // Default filter state
@@ -63,6 +64,8 @@ interface ViewContextValue {
   uniqueSenderCount: number;
   filteredEmailCount: number;
   isFiltered: boolean;
+  hiddenEmailCount: number;
+  hiddenSenderCount: number;
   resetFilters: () => void;
 
   // Selection
@@ -90,6 +93,7 @@ const ViewContext = createContext<ViewContextValue | null>(null);
 
 export function ViewProvider({ children }: { children: ReactNode }) {
   const { messages } = useData();
+  const { trustedSenders, hiddenSenders, showHidden } = usePreferences();
 
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>(DEFAULT_FILTERS);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
@@ -113,10 +117,20 @@ export function ViewProvider({ children }: { children: ReactNode }) {
     [messages],
   );
 
-  // 2. Filtered sender groups — apply time, search, spam filters in order
+  // Apply trusted: override isSuspectedSpam for trusted senders
+  const allSenderGroupsWithPrefs = useMemo<SenderGroup[]>(
+    () => allSenderGroups.map(g =>
+      trustedSenders.has(g.sender.email)
+        ? { ...g, isSuspectedSpam: false, spamReasons: [] }
+        : g
+    ),
+    [allSenderGroups, trustedSenders],
+  );
+
+  // 2. Filtered sender groups — apply time, search, spam, hidden filters
   const filteredSenderGroups = useMemo<SenderGroup[]>(() => {
     let groups = applyTimeFilterWithMessages(
-      allSenderGroups,
+      allSenderGroupsWithPrefs,
       activeFilters.timeFilter,
       messages,
     );
@@ -124,8 +138,12 @@ export function ViewProvider({ children }: { children: ReactNode }) {
     if (activeFilters.showSpamOnly) {
       groups = groups.filter((g) => g.isSuspectedSpam === true);
     }
+    // Hide hidden senders unless showHidden is on
+    if (!showHidden) {
+      groups = groups.filter((g) => !hiddenSenders.has(g.sender.email));
+    }
     return groups;
-  }, [allSenderGroups, activeFilters.timeFilter, activeFilters.showSpamOnly, debouncedSearchQuery, messages]);
+  }, [allSenderGroupsWithPrefs, activeFilters.timeFilter, activeFilters.showSpamOnly, debouncedSearchQuery, messages, hiddenSenders, showHidden]);
 
   // 3. Filtered domain groups
   const filteredDomainGroups = useMemo<DomainGroup[]>(
@@ -141,14 +159,24 @@ export function ViewProvider({ children }: { children: ReactNode }) {
 
   // 5. Stats
   const totalEmailCount = useMemo(() => messages.length, [messages]);
-  const uniqueSenderCount = useMemo(() => allSenderGroups.length, [allSenderGroups]);
+  const uniqueSenderCount = useMemo(() => allSenderGroupsWithPrefs.length, [allSenderGroupsWithPrefs]);
+  const hiddenEmailCount = useMemo(
+    () => allSenderGroupsWithPrefs
+      .filter(g => hiddenSenders.has(g.sender.email))
+      .reduce((sum, g) => sum + g.count, 0),
+    [allSenderGroupsWithPrefs, hiddenSenders],
+  );
+  const hiddenSenderCount = useMemo(
+    () => allSenderGroupsWithPrefs.filter(g => hiddenSenders.has(g.sender.email)).length,
+    [allSenderGroupsWithPrefs, hiddenSenders],
+  );
   const filteredEmailCount = useMemo(
     () => filteredSenderGroups.reduce((sum, g) => sum + g.count, 0),
     [filteredSenderGroups],
   );
   const isFiltered = useMemo(
-    () => activeFilters.timeFilter.type !== 'all' || activeFilters.searchQuery.trim() !== '' || activeFilters.showSpamOnly,
-    [activeFilters],
+    () => activeFilters.timeFilter.type !== 'all' || activeFilters.searchQuery.trim() !== '' || activeFilters.showSpamOnly || (!showHidden && hiddenSenders.size > 0),
+    [activeFilters, showHidden, hiddenSenders],
   );
 
   // ---------------------------------------------------------------------------
@@ -342,6 +370,8 @@ export function ViewProvider({ children }: { children: ReactNode }) {
     uniqueSenderCount,
     filteredEmailCount,
     isFiltered,
+    hiddenEmailCount,
+    hiddenSenderCount,
     resetFilters,
     selection,
     selectAll,

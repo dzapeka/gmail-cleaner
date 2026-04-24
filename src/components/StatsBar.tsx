@@ -1,4 +1,5 @@
 import { useView } from '../context/ViewContext';
+import { usePreferences } from '../context/PreferencesContext';
 
 export function StatsBar() {
   const {
@@ -7,10 +8,14 @@ export function StatsBar() {
     filteredEmailCount,
     filteredSenderGroups,
     isFiltered,
+    hiddenEmailCount,
+    hiddenSenderCount,
     resetFilters,
   } = useView();
+  const { showHidden, setShowHidden, hiddenSenders } = usePreferences();
 
   const filteredSenderCount = filteredSenderGroups.length;
+  const hasHidden = hiddenSenders.size > 0;
 
   return (
     <div style={{
@@ -48,9 +53,6 @@ export function StatsBar() {
               borderRadius: '12px',
               cursor: 'pointer',
               color: '#555',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
             }}
           >
             × Clear filters
@@ -61,6 +63,28 @@ export function StatsBar() {
           <span>Total emails: <strong>{totalEmailCount.toLocaleString()}</strong></span>
           <span>Unique senders: <strong>{uniqueSenderCount.toLocaleString()}</strong></span>
         </>
+      )}
+
+      {/* Hidden senders indicator */}
+      {hasHidden && (
+        <button
+          onClick={() => setShowHidden(!showHidden)}
+          style={{
+            padding: '2px 10px',
+            fontSize: '0.8rem',
+            background: showHidden ? '#fce8e6' : '#fff',
+            border: '1px solid #dadce0',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            color: showHidden ? '#d93025' : '#888',
+            marginLeft: 'auto',
+          }}
+          title={showHidden ? 'Click to hide them again' : 'Click to show hidden senders'}
+        >
+          {showHidden
+            ? `Showing ${hiddenSenderCount} hidden`
+            : `${hiddenSenderCount} hidden (${hiddenEmailCount.toLocaleString()} emails)`}
+        </button>
       )}
     </div>
   );
