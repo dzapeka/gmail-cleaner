@@ -135,7 +135,9 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 ## Notes
 
 - The app only downloads email **metadata** (From, Subject, Date) — never the full email body
-- Data is cached in `localStorage` for 24 hours to avoid re-downloading
+- Data is cached in browser `localStorage` under the key `gmail-cleaner-cache-<userId>` and persists between sessions until you sign out or clear the browser storage
+- Sync does **not** start automatically on login — click **Start sync** to begin
+- **Re-sync** does a full refresh from Gmail — any emails you deleted in Gmail will be removed from the local cache
 - Gmail API is **free** — no charges for personal use
 - The app works in **Testing mode** — only accounts added as Test Users can sign in
 
