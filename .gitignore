@@ -2,7 +2,11 @@
 .env
 .env.local
 
-# Logs
+# Kiro IDE files
+.kiro/
+
+# Editor directories and files
+.vscode/
 logs
 *.log
 npm-debug.log*
@@ -17,8 +21,6 @@ dist-ssr
 *.local
 
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
 .idea
 .DS_Store
 *.suo
