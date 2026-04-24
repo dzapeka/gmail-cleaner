@@ -3,20 +3,18 @@
  *
  * - AccessToken is stored exclusively in sessionStorage, which is scoped to the
  *   current browser tab and cleared automatically when the tab is closed.
- *   It is never written to localStorage, cookies, or any server-side storage.
  *
- * - No token is ever transmitted to third-party servers. The only endpoints
- *   that receive credentials are Google's own OAuth2 token endpoint
- *   (https://oauth2.googleapis.com/token) and the Gmail REST API.
+ * - client_secret is stored only on the auth proxy server (server/index.ts) and
+ *   never sent to the browser. The browser only sends code + code_verifier to
+ *   the proxy, which adds the secret server-side before calling Google.
  *
  * - All Gmail API calls are made directly from the user's browser to
- *   https://www.googleapis.com/gmail/v1/. No proxy server or backend
- *   intermediary is involved in these requests.
+ *   https://www.googleapis.com/gmail/v1/. No proxy is involved in those requests.
  */
 
 const AUTH_STORAGE_KEY = 'gmail-cleaner-auth';
 const PKCE_VERIFIER_KEY = 'gmail-cleaner-pkce-verifier';
-const TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';
+const AUTH_SERVER_URL = (import.meta.env.VITE_AUTH_SERVER_URL as string) ?? 'http://localhost:3001';
 const AUTH_ENDPOINT = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GMAIL_SCOPES =
   'openid email profile https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.modify';
@@ -58,21 +56,12 @@ export function buildAuthUrl(challenge: string): string {
   return `${AUTH_ENDPOINT}?${params.toString()}`;
 }
 
-/** Exchanges authorization code for tokens and stores them in sessionStorage */
+/** Exchanges authorization code for tokens via auth proxy server (client_secret stays server-side) */
 export async function exchangeCodeForTokens(code: string, verifier: string): Promise<void> {
-  const params = new URLSearchParams({
-    code,
-    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID as string,
-    client_secret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET as string,
-    redirect_uri: import.meta.env.VITE_REDIRECT_URI as string,
-    code_verifier: verifier,
-    grant_type: 'authorization_code',
-  });
-
-  const response = await fetch(TOKEN_ENDPOINT, {
+  const response = await fetch(`${AUTH_SERVER_URL}/auth/token`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: params.toString(),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code, code_verifier: verifier }),
   });
 
   if (!response.ok) {
@@ -90,30 +79,21 @@ export async function exchangeCodeForTokens(code: string, verifier: string): Pro
     access_token: data.access_token,
     refresh_token: data.refresh_token,
     expiry: Date.now() + data.expires_in * 1000,
-    userId: '', // populated later from userinfo
+    userId: '',
   };
 
   sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(auth));
 }
 
-/** Reads refresh_token from sessionStorage, refreshes access token, updates storage, returns new token */
+/** Refreshes access token via auth proxy server */
 export async function refreshAccessToken(): Promise<string> {
   const auth = getStoredAuth();
-  if (!auth) {
-    throw new Error('No stored auth to refresh');
-  }
+  if (!auth) throw new Error('No stored auth to refresh');
 
-  const params = new URLSearchParams({
-    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID as string,
-    client_secret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET as string,
-    refresh_token: auth.refresh_token,
-    grant_type: 'refresh_token',
-  });
-
-  const response = await fetch(TOKEN_ENDPOINT, {
+  const response = await fetch(`${AUTH_SERVER_URL}/auth/refresh`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: params.toString(),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refresh_token: auth.refresh_token }),
   });
 
   if (!response.ok) {
