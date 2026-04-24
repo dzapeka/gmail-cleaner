@@ -2,6 +2,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
   useCallback,
   type ReactNode,
@@ -24,6 +25,7 @@ interface DataContextValue {
   lastSyncedAt: string | null;
   cacheWarning: boolean;
   startSync: () => Promise<void>;
+  stopSync: () => void;
   clearCache: () => void;
 }
 
@@ -38,28 +40,30 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
   const [cacheWarning, setCacheWarning] = useState(false);
 
-  // On mount / auth change: try to load from cache
+  // Cancellation flag — set to true to abort an in-progress sync
+  const cancelledRef = useRef(false);
+
+  // On mount / auth change: try to load from cache only (no auto-sync)
   useEffect(() => {
     if (!isAuthenticated || !userId) return;
 
     const cached = MetadataCache.load(userId);
     if (!cached) return;
 
-    const ageMs = Date.now() - new Date(cached.cachedAt).getTime();
     setMessages(cached.messages);
     setLastSyncedAt(cached.cachedAt);
-
-    if (ageMs < CACHE_MAX_AGE_MS) {
-      setSyncStatus('done');
-    } else {
-      // Cache is stale — load it but leave status as 'idle' to prompt re-sync
-      setSyncStatus('idle');
-    }
+    setSyncStatus('done');
   }, [isAuthenticated, userId]);
+
+  const stopSync = useCallback(() => {
+    cancelledRef.current = true;
+    setSyncStatus('idle');
+  }, []);
 
   const startSync = useCallback(async () => {
     if (!userId) return;
 
+    cancelledRef.current = false;
     setSyncStatus('syncing');
     setSyncProgress({ downloaded: 0, total: 0 });
     setCacheWarning(false);
@@ -68,7 +72,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
       const client = new GmailApiClient(async () => {
         const stored = getStoredAuth();
         if (!stored) throw new Error('Not authenticated');
-        // Refresh if expiring soon (handled inside GmailApiClient too, but be explicit)
         if (stored.expiry - Date.now() < 60_000) {
           return refreshAccessToken();
         }
@@ -80,27 +83,26 @@ export function DataProvider({ children }: { children: ReactNode }) {
       let pageToken: string | undefined;
 
       do {
-        const result = await client.listMessageIds({
-          labelIds: ['INBOX'],
-          pageToken,
-        });
+        if (cancelledRef.current) return;
+        const result = await client.listMessageIds({ labelIds: ['INBOX'], pageToken });
         allIds.push(...result.messageIds);
         pageToken = result.nextPageToken;
       } while (pageToken);
 
       setSyncProgress({ downloaded: 0, total: allIds.length });
 
-      // Deduplicate IDs before fetching
       const uniqueIds = [...new Set(allIds)];
-
-      // Batch-fetch metadata in chunks of BATCH_SIZE
       const fetched: MessageMetadata[] = [];
+
       for (let i = 0; i < uniqueIds.length; i += BATCH_SIZE) {
+        if (cancelledRef.current) return;
         const chunk = uniqueIds.slice(i, i + BATCH_SIZE);
         const batch = await client.batchGetMetadata(chunk);
         fetched.push(...batch);
         setSyncProgress({ downloaded: fetched.length, total: uniqueIds.length });
       }
+
+      if (cancelledRef.current) return;
 
       // Deduplicate by id
       const seen = new Set<string>();
@@ -126,6 +128,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       setLastSyncedAt(now);
       setSyncStatus('done');
     } catch (err) {
+      if (cancelledRef.current) return;
       console.error('Sync failed:', err);
       setSyncStatus('error');
     }
@@ -139,13 +142,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setSyncStatus('idle');
   }, [userId]);
 
-  // Auto-start sync when authenticated and no cache exists
-  useEffect(() => {
-    if (isAuthenticated && userId && syncStatus === 'idle' && messages.length === 0) {
-      void startSync();
-    }
-  }, [isAuthenticated, userId]); // eslint-disable-line react-hooks/exhaustive-deps
-
   const value: DataContextValue = {
     messages,
     syncStatus,
@@ -153,6 +149,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     lastSyncedAt,
     cacheWarning,
     startSync,
+    stopSync,
     clearCache,
   };
 
