@@ -18,6 +18,8 @@ All Gmail data stays in your browser — no third-party storage. A small local a
 - Merge or Replace sync modes
 - Time-based display filter with grouped options (newer than / older than)
 - Filtered stats bar showing "X of Y emails" with one-click clear
+- **Trusted senders** — mark senders as trusted to suppress spam detection
+- **Hidden senders** — hide senders from the list; preferences persist across sessions
 
 ---
 
@@ -123,11 +125,16 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
    - **By domain** — group senders by domain instead of individual address
    - Stats bar shows `X of Y emails · A of B senders` when filters are active, with a **× Clear filters** button
 5. Select senders using checkboxes
-6. Choose an action:
+6. Manage individual senders with per-row actions:
+   - **Trust** — marks sender as trusted, suppresses spam detection for them
+   - **Hide** — hides sender from the list (shown in stats bar, toggle to reveal)
+7. Choose a bulk action:
    - **Delete** — moves selected emails to trash
    - **Create filter** — sets up a Gmail rule for future emails
    - **Unsubscribe** — opens the unsubscribe link in a new tab
-7. Use **Export CSV** to download the current filtered sender list
+8. Use **Export CSV** to download the current filtered sender list
+
+> Trusted and hidden sender preferences are saved in `localStorage` and **persist across sessions** — they are not cleared on sign-out.
 
 ---
 
@@ -142,6 +149,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 - The app only downloads email **metadata** (From, Subject, Date) — never the full email body
 - Data is cached in browser `localStorage` under the key `gmail-cleaner-cache-<userId>` and persists between sessions until you sign out or clear the browser storage
+- Trusted and hidden sender preferences are stored under `gmail-cleaner-preferences-<userId>` and are **not** cleared on sign-out
 - Sync does **not** start automatically on login — select a range and click **Start sync**
 - **Merge sync** adds new emails to the existing cache; **Replace sync** fully replaces it
 - **Re-sync** fetches fresh data from Gmail — deleted emails will be removed from the cache
