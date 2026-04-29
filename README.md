@@ -85,7 +85,7 @@ VITE_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 VITE_REDIRECT_URI=http://localhost:5173
 
 # Browser only
-VITE_AUTH_SERVER_URL=http://localhost:3001
+VITE_AUTH_SERVER_URL=http://localhost:5174
 
 # Server only (never sent to browser)
 GOOGLE_CLIENT_SECRET=your-client-secret
@@ -107,7 +107,7 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-> The auth proxy runs on `http://localhost:3001` and handles OAuth token exchange server-side so that `client_secret` is never exposed in the browser.
+> The auth proxy runs on `http://localhost:5174` and handles OAuth token exchange server-side so that `client_secret` is never exposed in the browser.
 
 ---
 

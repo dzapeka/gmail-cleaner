@@ -2,11 +2,16 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 
+console.log('[server] Starting...');
+console.log('[server] NODE_VERSION:', process.version);
+console.log('[server] CWD:', process.cwd());
+console.log('[server] ENV CHECK - CLIENT_ID:', process.env.VITE_GOOGLE_CLIENT_ID ? 'SET' : 'MISSING');
+console.log('[server] ENV CHECK - CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'SET' : 'MISSING');
+
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Allow requests from the Vite dev server
 app.use(cors({ origin: process.env.VITE_REDIRECT_URI ?? 'http://localhost:5173' }));
 
 const TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';
@@ -14,16 +19,24 @@ const CLIENT_ID = process.env.VITE_GOOGLE_CLIENT_ID ?? '';
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET ?? '';
 const REDIRECT_URI = process.env.VITE_REDIRECT_URI ?? 'http://localhost:5173';
 
+// Health check
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // POST /auth/token — exchange authorization code for tokens
 app.post('/auth/token', async (req, res) => {
+  console.log('[/auth/token] Request received');
   const { code, code_verifier } = req.body as { code?: string; code_verifier?: string };
 
   if (!code || !code_verifier) {
+    console.log('[/auth/token] Missing code or code_verifier');
     res.status(400).json({ error: 'Missing code or code_verifier' });
     return;
   }
 
   try {
+    console.log('[/auth/token] Calling Google token endpoint...');
     const params = new URLSearchParams({
       code,
       client_id: CLIENT_ID,
@@ -39,21 +52,26 @@ app.post('/auth/token', async (req, res) => {
       body: params.toString(),
     });
 
+    console.log('[/auth/token] Google response status:', response.status);
     const data = await response.json();
 
     if (!response.ok) {
+      console.log('[/auth/token] Google error:', JSON.stringify(data));
       res.status(response.status).json(data);
       return;
     }
 
+    console.log('[/auth/token] Success');
     res.json(data);
   } catch (err) {
+    console.error('[/auth/token] Exception:', err);
     res.status(500).json({ error: 'Token exchange failed' });
   }
 });
 
 // POST /auth/refresh — refresh access token
 app.post('/auth/refresh', async (req, res) => {
+  console.log('[/auth/refresh] Request received');
   const { refresh_token } = req.body as { refresh_token?: string };
 
   if (!refresh_token) {
@@ -75,20 +93,52 @@ app.post('/auth/refresh', async (req, res) => {
       body: params.toString(),
     });
 
+    console.log('[/auth/refresh] Google response status:', response.status);
     const data = await response.json();
 
     if (!response.ok) {
+      console.log('[/auth/refresh] Google error:', JSON.stringify(data));
       res.status(response.status).json(data);
       return;
     }
 
     res.json(data);
   } catch (err) {
+    console.error('[/auth/refresh] Exception:', err);
     res.status(500).json({ error: 'Token refresh failed' });
   }
 });
 
-const PORT = process.env.PORT ?? 3001;
-app.listen(PORT, () => {
-  console.log(`Auth proxy server running on http://localhost:${PORT}`);
+// Handle uncaught errors to prevent silent exit
+process.on('uncaughtException', (err) => {
+  console.error('[server] Uncaught exception:', err);
 });
+
+process.on('unhandledRejection', (reason) => {
+  console.error('[server] Unhandled rejection:', reason);
+});
+
+process.on('exit', (code) => {
+  console.log('[server] Process exiting with code:', code);
+});
+
+process.on('SIGTERM', () => {
+  console.log('[server] SIGTERM received');
+});
+
+process.on('SIGINT', () => {
+  console.log('[server] SIGINT received');
+  process.exit(0);
+});
+
+const PORT = process.env.PORT ?? 5174;
+const server = app.listen(PORT, () => {
+  console.log(`[server] Auth proxy server running on http://localhost:${PORT}`);
+  console.log('[server] Server is ready to accept connections');
+});
+
+server.on('error', (err) => {
+  console.error('[server] Server error:', err);
+});
+
+console.log('[server] app.listen() called, waiting for connections...');
