@@ -11,11 +11,13 @@ import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { FilterConfigDialog } from './FilterConfigDialog';
 import { UnsubscribeConfirmDialog } from './UnsubscribeConfirmDialog';
 import { useView } from '../context/ViewContext';
+import { useData } from '../context/DataContext';
 import { generateCsv, downloadCsv } from '../utils/csvExport';
 import type { SenderGroup } from '../types/index';
 
 export function MainLayout() {
   const { filteredSenderGroups, totalEmailCount, removeDeletedMessages } = useView();
+  const { removeMessages } = useData();
 
   const [highlightedEmail, setHighlightedEmail] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -33,7 +35,8 @@ export function MainLayout() {
   }
 
   function handleDeleted(deletedIds: Set<string>) {
-    removeDeletedMessages(deletedIds);
+    removeDeletedMessages(deletedIds); // update ViewContext selection
+    removeMessages(deletedIds);        // update DataContext state + localStorage cache
     setDeleteOpen(false);
   }
 

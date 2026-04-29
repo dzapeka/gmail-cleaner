@@ -151,6 +151,7 @@ interface ExpandedEmailListProps {
   allMessages: Map<string, { subject: string; date: string }>;
   toggleMessage: (id: string) => void;
   selectedMessageIds: Set<string>;
+  isSenderSelected: boolean; // true when the whole sender group is selected
 }
 
 function ExpandedEmailList({
@@ -158,7 +159,10 @@ function ExpandedEmailList({
   allMessages,
   toggleMessage,
   selectedMessageIds,
+  isSenderSelected,
 }: ExpandedEmailListProps) {
+  // A message is "checked" if either the whole sender is selected OR the individual message is selected
+  const isMessageChecked = (id: string) => isSenderSelected || selectedMessageIds.has(id);
   const hasClusters = group.subjectClusters.length > 0;
 
   // Cluster breakdown summary string
@@ -193,9 +197,7 @@ function ExpandedEmailList({
         <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '0.5rem' }}>
           <tbody>
             {group.subjectClusters.map((cluster) => {
-              const allSelected = cluster.messageIds.every((id) =>
-                selectedMessageIds.has(id),
-              );
+              const allSelected = cluster.messageIds.every((id) => isMessageChecked(id));
               return (
                 <tr key={cluster.normalizedPattern} style={{ background: '#f5f5f5' }}>
                   <td style={{ ...cellStyle, width: '2rem' }}>
@@ -204,7 +206,7 @@ function ExpandedEmailList({
                       checked={allSelected}
                       onChange={() => {
                         for (const id of cluster.messageIds) {
-                          const isSelected = selectedMessageIds.has(id);
+                          const isSelected = isMessageChecked(id);
                           if (allSelected ? isSelected : !isSelected) {
                             toggleMessage(id);
                           }
@@ -249,7 +251,7 @@ function ExpandedEmailList({
                 <td style={{ ...cellStyle, width: '2rem' }}>
                   <input
                     type="checkbox"
-                    checked={selectedMessageIds.has(id)}
+                    checked={isMessageChecked(id)}
                     onChange={() => toggleMessage(id)}
                     aria-label={`Select email ${id}`}
                   />
@@ -499,6 +501,7 @@ function SenderTableView({ highlightedEmail, onUnsubscribeClick }: SenderTablePr
                           allMessages={msgMap}
                           toggleMessage={toggleMessage}
                           selectedMessageIds={selection.selectedMessageIds}
+                          isSenderSelected={selection.selectedSenderEmails.has(row.original.sender.email)}
                         />
                       </td>
                     </tr>

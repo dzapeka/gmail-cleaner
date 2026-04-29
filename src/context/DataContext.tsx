@@ -64,6 +64,7 @@ interface DataContextValue {
   startSync: (options: SyncOptions) => Promise<void>;
   stopSync: () => void;
   clearCache: () => void;
+  removeMessages: (deletedIds: Set<string>) => void;
 }
 
 const DataContext = createContext<DataContextValue | null>(null);
@@ -214,6 +215,24 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setLastSyncResult(null);
   }, [userId]);
 
+  // Remove deleted messages from state and update localStorage cache
+  const removeMessages = useCallback((deletedIds: Set<string>) => {
+    if (!userId) return;
+    setMessages(prev => {
+      const updated = prev.filter(m => !deletedIds.has(m.id));
+      // Update localStorage cache
+      const cached = MetadataCache.load(userId);
+      if (cached) {
+        MetadataCache.save(userId, {
+          ...cached,
+          messages: updated,
+          cachedAt: new Date().toISOString(),
+        });
+      }
+      return updated;
+    });
+  }, [userId]);
+
   const value: DataContextValue = {
     messages,
     syncStatus,
@@ -224,6 +243,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     startSync,
     stopSync,
     clearCache,
+    removeMessages,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
